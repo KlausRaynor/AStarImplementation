@@ -1,31 +1,29 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
 
 public class PathRequestManager : MonoBehaviour
 {
-    
-    Queue<PathRequest> _pathRequestQueue = new Queue<PathRequest>();
+    private readonly Queue<PathRequest> _pathRequestQueue = new();
     PathRequest _currentPathRequest;
-    
-    static PathRequestManager _instance;
+    static PathRequestManager Instance;
     PathGenerator _pathGenerator;
+    
     private bool _isProcessingPath;
 
     void Awake()
     {
-        _instance = this;
+        Instance = this;
         _pathGenerator = GetComponent<PathGenerator>();
     }
     public static void RequestPath(Vector3 pathStart, Vector3 pathEnd, Action<Vector3[], bool> callback)
     {
         PathRequest newRequest = new PathRequest(pathStart, pathEnd, callback);
-        _instance._pathRequestQueue.Enqueue(newRequest);
-        _instance.TryProecessNext();
+        Instance._pathRequestQueue.Enqueue(newRequest);
+        Instance.TryProcessNext();
     }
 
-    private void TryProecessNext()
+    private void TryProcessNext()
     {
         if (!_isProcessingPath && _pathRequestQueue.Count > 0)
         {
@@ -39,7 +37,7 @@ public class PathRequestManager : MonoBehaviour
     {
         _currentPathRequest.callback(path, success);
         _isProcessingPath = false;
-        TryProecessNext();
+        TryProcessNext();
     }
 
     struct PathRequest

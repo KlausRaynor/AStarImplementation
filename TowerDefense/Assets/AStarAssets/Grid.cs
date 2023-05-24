@@ -11,7 +11,7 @@ public class Grid : MonoBehaviour
     private Node[,] grid;
     private float _nodeDiameter;
     private int gridSizeX, gridSizeY;
-    public bool onlyDisplayPathGizmos;
+    public bool displayGridGizmos;
     public int MaxSize => gridSizeX * gridSizeY;
     void Awake()
     {
@@ -86,37 +86,21 @@ public class Grid : MonoBehaviour
 
     }
 
-public List<Node> path;
     void OnDrawGizmos()
     {
         Gizmos.DrawWireCube(transform.position, new Vector3(_gridWorldSize.x, 1, _gridWorldSize.y));
-        if (onlyDisplayPathGizmos)
-        {
-            if (path != null)
-            {
-                foreach (Node n in path)
-                {
-                    Gizmos.color = Color.green;
-                    Gizmos.DrawCube(n._worldPos, Vector3.one * (_nodeDiameter - 0.1f));
-                }
-            }
-        } else
-        {
-            if (grid != null)
-            {
-                Node playerNode = NodeFromWorldPoint(_player.position);
-                foreach(Node n in grid)
-                {
-                    Gizmos.color = (n._walkable) ? Color.white : Color.red;
 
-                    if (playerNode == n)
-                    {
-                        Gizmos.color = Color.cyan;
-                    }
-                    Gizmos.DrawCube(n._worldPos, Vector3.one * (_nodeDiameter - 0.1f));
+        if (grid == null || !displayGridGizmos) return;
+        Node playerNode = NodeFromWorldPoint(_player.position);
+            foreach(Node n in grid)
+            {
+                Gizmos.color = (n._walkable) ? Color.white : Color.red;
+
+                if (playerNode == n)
+                {
+                    Gizmos.color = Color.cyan;
                 }
+                Gizmos.DrawCube(n._worldPos, Vector3.one * (_nodeDiameter - 0.1f));
             }
-        }
-        
     }
 }
